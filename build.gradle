@@ -10,7 +10,6 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 allprojects {
@@ -19,11 +18,11 @@ allprojects {
     }
 }
 group 'net.liplum'
-version '0.1.1'
-apply plugin: 'com.github.johnrengelman.shadow'
+version '0.1.2'
 apply plugin: 'kotlin'
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.test.java.srcDirs = ['test']
+sourceSets.main.kotlin.srcDirs = ["src"]
 
 repositories {
     mavenCentral()
@@ -32,7 +31,7 @@ repositories {
 dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-    compileOnly "com.github.liplum:OpenGAL:$OpenGALVerison"
+    implementation "com.github.liplum:OpenGAL:$OpenGALVerison"
 
     testImplementation "com.github.liplum:OpenGAL:$OpenGALVerison"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
@@ -54,19 +53,16 @@ compileTestKotlin {
         jvmTarget = '1.8'
     }
 }
+
 jar {
     //noinspection GroovyAssignabilityCheck
     manifest {
         attributes 'Main-Class': 'net.liplum.plumy.PlumyCompilerKt'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveFileName = 'Plumy.jar'
-}
-shadowJar {
-    configurations = [project.configurations.compileClasspath]
-    archiveFileName = 'PlumyCompiler.jar'
-}
-
-artifacts {
-    archives shadowJar
+    archivesBaseName = 'PlumyCompiler'
+    from sourceSets.main.allSource
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
