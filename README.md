@@ -1,6 +1,7 @@
 # OpenGAL Plumy
-**A [Open GAL](https://github.com/liplum/OpenGAL) compiler.**
+[![](https://jitpack.io/v/liplum/OpenGalPlumy.svg)](https://jitpack.io/#liplum/OpenGalPlumy)
 
+**A [Open GAL](https://github.com/liplum/OpenGAL) compiler.**
 ## Functions
 - Converts source code (.gal) to node language (.node)
 - Generate Node Tree by source code (.gal).

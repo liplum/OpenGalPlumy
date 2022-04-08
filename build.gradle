@@ -18,7 +18,7 @@ allprojects {
     }
 }
 group 'net.liplum'
-version '0.1.2'
+version '0.1.1'
 apply plugin: 'kotlin'
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.test.java.srcDirs = ['test']
