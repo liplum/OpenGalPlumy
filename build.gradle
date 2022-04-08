@@ -19,7 +19,7 @@ allprojects {
     }
 }
 group 'net.liplum'
-version '0.1'
+version '0.1.1'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 sourceSets.main.java.srcDirs = ['src']
@@ -65,4 +65,8 @@ jar {
 shadowJar {
     configurations = [project.configurations.compileClasspath]
     archiveFileName = 'PlumyCompiler.jar'
+}
+
+artifacts {
+    archives shadowJar
 }
