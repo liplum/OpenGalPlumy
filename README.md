@@ -21,7 +21,7 @@ allprojects {
 Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.liplum:OpenGalPlumy:v0.1.5'
+    implementation 'com.github.liplum:OpenGalPlumy:v0.1.4'
 }
 ```
 
@@ -33,5 +33,5 @@ dependencies {
 java -jar PlumyCompiler.jar -help
 # To compile
 java -jar PlumyCompiler.jar -c xxx.gal -t xxx.node
-java -jar PlumyCompiler.jar -c -batch=folder -recursive=true /projects
+java -jar PlumyCompiler.jar -c -batch=folder -recursive=true projects/src
 ```

@@ -1,3 +1,4 @@
+//file:noinspection GroovyAssignabilityCheck
 buildscript {
     ext.kotlin_version = '1.6.10'
     ext.OpenGALVerison = 'v0.3.1'
@@ -10,6 +11,7 @@ buildscript {
 }
 
 plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 allprojects {
@@ -18,7 +20,8 @@ allprojects {
     }
 }
 group 'net.liplum'
-version '0.1.5'
+version '0.1.4'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.test.java.srcDirs = ['test']
@@ -59,14 +62,16 @@ compileTestKotlin {
 }
 
 jar {
-    //noinspection GroovyAssignabilityCheck
     manifest {
         attributes 'Main-Class': 'net.liplum.plumy.PlumyCompiler'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archivesBaseName = 'PlumyCompiler'
     from sourceSets.main.allSource
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+}
+
+shadowJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    configurations = [project.configurations.compileClasspath]
+    archiveFileName = "PlumyCompiler-${project.version}.jar"
+    from sourceSets.main.allSource
 }
