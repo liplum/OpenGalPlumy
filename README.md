@@ -2,7 +2,7 @@
 [![](https://jitpack.io/v/liplum/OpenGalPlumy.svg)](https://jitpack.io/#liplum/OpenGalPlumy)
 
 **A [Open GAL](https://github.com/liplum/OpenGAL) compiler based on 
-OpenGAL 0.3.**
+OpenGAL 0.3.1.**
 
 ## Functions
 - Converts source code (.gal) to node language (.node)
@@ -21,7 +21,7 @@ allprojects {
 Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.liplum:OpenGalPlumy:v0.1.2'
+    implementation 'com.github.liplum:OpenGalPlumy:v0.1.5'
 }
 ```
 

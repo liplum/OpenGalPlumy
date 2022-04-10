@@ -1,6 +1,6 @@
 buildscript {
     ext.kotlin_version = '1.6.10'
-    ext.OpenGALVerison = 'v0.3'
+    ext.OpenGALVerison = 'v0.3.1'
     repositories {
         mavenCentral()
     }
@@ -18,7 +18,7 @@ allprojects {
     }
 }
 group 'net.liplum'
-version '0.1.2'
+version '0.1.5'
 apply plugin: 'kotlin'
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.test.java.srcDirs = ['test']
@@ -61,7 +61,7 @@ compileTestKotlin {
 jar {
     //noinspection GroovyAssignabilityCheck
     manifest {
-        attributes 'Main-Class': 'net.liplum.plumy.PlumyCompilerKt'
+        attributes 'Main-Class': 'net.liplum.plumy.PlumyCompiler'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archivesBaseName = 'PlumyCompiler'
