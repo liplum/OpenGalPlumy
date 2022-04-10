@@ -72,6 +72,6 @@ jar {
 shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     configurations = [project.configurations.compileClasspath]
-    archiveFileName = "PlumyCompiler-${project.version}.jar"
+    archiveFileName = "PlumyCompiler.jar"
     from sourceSets.main.allSource
 }
