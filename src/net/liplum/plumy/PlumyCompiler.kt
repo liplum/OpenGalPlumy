@@ -1,12 +1,15 @@
+@file:JvmName("PlumyCompiler")
+
 package net.liplum.plumy
 
 import net.liplum.plumy.Parallel.Companion.toParallel
 import opengal.core.GalCompiler
+import opengal.exceptions.AnalysisException
 import java.io.File
 import java.util.*
 import kotlin.system.exitProcess
 
-const val VERSION = "v0.1"
+const val VERSION = "v0.1.those2"
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         showHead()
@@ -23,14 +26,28 @@ fun main(args: Array<String>) {
         if (args[0].isCompile)
             compileTask(args)
     } catch (e: Exception) {
-        println("[Error]${e.name}:${e.message}")
+        println("[Error]${e.totalMessage}")
         exitProcess(1)
     }
     exitProcess(0)
 }
 
-val Exception.name: String
-    get() = javaClass.simpleName.removeSuffix("Exception")
+val Exception.totalMessage: String
+    get() {
+        val s = StringBuffer()
+        var preCause: Throwable = this
+        var curCause: Throwable? = this
+        while (curCause != null) {
+            s.append(curCause.javaClass.name)
+            s.append('\n')
+            s.append(curCause.message?:"No message.")
+            s.append('\n')
+            preCause = curCause
+            curCause = curCause.cause
+        }
+        s.append(preCause.stackTraceToString())
+        return s.toString()
+    }
 private val HelpKeywords = setOf(
     "-help", "-h", "help"
 )
@@ -125,11 +142,11 @@ private fun compile(args: Args, galPath: String, nodePath: String?) {
             .toParallel()
             .parallel {
                 if (nodeFolder == null)
-                    File(it.parent, it.name.galToNode())
+                    it.parentFile.subFile(it.name.galToNode())
                 else
                     it.mapFolder(galFolder, nodeFolder) { n -> n.galToNode() }.createParent()
             }.handle { gal, node, e ->
-                println("[Error] ${e.name}:${e.message} on ${gal.absolutePath} to ${node.absolutePath}")
+                println("[Error] ${e.totalMessage} on ${gal.absolutePath} to ${node.absolutePath}")
             }.foreach { gal, node ->
                 gal compileInto node
             }
@@ -172,23 +189,13 @@ operator fun File.minus(parent: File): String {
     val b = parent.absolutePath
     return a.substring(b.length + 1)
 }
-private
-inline fun <T, reified C> Iterable<T>.collect(
-    type: () -> C
-): C where C : MutableList<T> {
-    val res = type()
-    for (e in this) {
-        res.add(e)
-    }
-    return res
-}
 
 private infix fun File.compileInto(output: File) {
     val nodeLang = Compiler.compileNodeLang(this.readText())
     output.writeBytes(nodeLang)
 }
 
-private class FileIteratorException(msg: String) : RuntimeException(msg)
+private class FileIteratorException(msg: String) : AnalysisException(msg)
 
 private fun File.subFiles(recursive: Boolean = false): List<File> {
     val res = LinkedList<File>()
@@ -249,7 +256,7 @@ private class Parallel<T>(
 private val KeyRegex = "(?<=-).+(?==)".toRegex()
 private val ValueRegex = "(?<==).+".toRegex()
 
-private class EmptyArgException(msg: String) : RuntimeException(msg)
+private class EmptyArgException(msg: String) : AnalysisException(msg)
 
 private fun Array<String>.extractCompileArgs(
     startIndex: Int

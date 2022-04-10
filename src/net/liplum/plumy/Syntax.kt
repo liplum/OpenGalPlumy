@@ -1,5 +1,6 @@
 package net.liplum.plumy
 
+import opengal.exceptions.AnalysisException
 import java.util.*
 
 /**
@@ -42,11 +43,6 @@ fun List<CodeBlocky>.toBlocky(context: PlumyLogos): List<Blocky> {
 data class Statement(val kw: Keywordy, val args: List<String> = emptyList()) {
     override fun toString() = ":${kw.name} $args"
 }
-
-class BlockyAnalysisException : RuntimeException {
-    constructor() : super()
-    constructor(msg: String) : super(msg)
-}
 /**
  * ##Contract
  * - split source codes line by line.
@@ -58,7 +54,7 @@ fun splitByLine(code: String, commentSyl: Char = '#'): ArrayList<String> {
     val lines = code.split("\\r?\\n".toRegex())
     for (line in lines) {
         if (line.isBlank()) continue
-        val realLine = line.replace('\t', ' ').allUntil { it != ' ' }.allBefore(commentSyl)
+        val realLine = line.replace('\t', ' ').allAfterWhen { it != ' ' }.allBefore(commentSyl)
         res.add(realLine)
     }
     return res
@@ -86,9 +82,11 @@ fun splitBlocky(
     for (line in lines) {
         if (!line.startsWithChar(kwStartSyls) && name.isEmpty()) {   // doesn't start with ':' or '@'
             val res = nameRegx.find(line)// such as "BlockA:"
+            // If it's a block head, add it.
             if (res != null) {
                 name = res.value
             }
+            // If it's something else, ignore it.
         } else if (line.startsWith(blockEndKw)) {
             // such as "end BlockA"
             blockies.add(CodeBlocky(name, cache))
@@ -124,7 +122,7 @@ fun separateMetaFromCode(
     return Pair(metilas, restCodes)
 }
 
-class KeywordNotFoundException(msg: String) : RuntimeException(msg)
+class KeywordNotFoundException(msg: String) : AnalysisException(msg)
 /**
  * @exception KeywordNotFoundException raises when keyword not found
  */
@@ -182,9 +180,9 @@ fun String.tryMatchVararg(context: PlumyLogos, possibilities: List<Int>): List<S
 }
 
 fun List<Code>.toStatement(context: PlumyLogos): MutableList<Statement> =
-    ArrayList(this.map { it.toStatement(context) })
+    ArrayList(this.map { it.mapCode(context).toStatement(context) })
 
-class UnboundParenthesisException(msg: String) : RuntimeException(msg)
+class UnboundParenthesisException(msg: String) : AnalysisException(msg)
 /**
  * ##Contract:
  * - doesn't start/end with space
@@ -223,7 +221,7 @@ fun String.splitArgs(context: PlumyLogos, argNum: Int): List<String> {
     return args
 }
 
-class NotQuotedButSpaceException(msg: String) : RuntimeException(msg)
+class NotQuotedButSpaceException(msg: String) : AnalysisException(msg)
 
 fun String.toQuotedString(context: PlumyLogos): String {
     val res = context.quotedRegex.find(this)
@@ -234,3 +232,5 @@ fun String.toQuotedString(context: PlumyLogos): String {
         this
     }
 }
+
+

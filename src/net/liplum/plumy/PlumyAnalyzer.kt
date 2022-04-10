@@ -4,7 +4,8 @@ package net.liplum.plumy
 
 import opengal.core.IAnalyzer
 import opengal.core.NodeTree
-import opengal.excpetions.NoSuchBlockException
+import opengal.exceptions.AnalysisException
+import opengal.exceptions.NoSuchBlockException
 import opengal.tree.BlockEndNode
 import opengal.tree.Node
 import java.util.*
@@ -77,7 +78,10 @@ class PlumyAnalyzer : IAnalyzer {
         // Transform all analy-node to runtime-node
         val finalNodes = bakeNodes(context, nodesInBlocky)
         // Create a node tree
-        val tree = NodeTree(finalNodes)
+        val tree = NodeTree(finalNodes).apply {
+            metas = HashMap()
+            inputs = HashSet()
+        }
         // handle with meta
         tree.handleMeta(metilas, context)
         // Output the result
@@ -88,16 +92,25 @@ class PlumyAnalyzer : IAnalyzer {
 fun NodeTree.handleMeta(inputMetas: List<Metila>, context: Whisper) {
     val info = context.logos
     for (meta in inputMetas) {
-        val metaType = info.name2Meta[meta.name] ?: throw RuntimeException("No such meta ${meta.name}")
+        val metaType = info.name2Meta[meta.name] ?: throw AnalysisException("No such meta ${meta.name}")
         metaType.handle(this, meta.args[0])
     }
+}
+
+fun Code.mapCode(context: PlumyLogos): Code {
+    // Maps the calcu node
+    if (!isMetila(context.metaSyl) && code.startsWith(context.referenceSyl)) {
+        return Code("${context.kwSyl}${context.kw2Name[Calcu]} $code")
+    }
+    return this
 }
 
 class PlumyLogos(
     var name: String = "Default"
 ) {
     @JvmField var kwStartSyls = listOf(':', '@')
-    @JvmField var metaSyl = '@'
+    @JvmField val metaSyl = '@'
+    @JvmField val referenceSyl = '@'
     @JvmField var kwSyl = ':'
     @JvmField var blockEndSyl = "end"
     @JvmField var commaSyl = ','
@@ -105,7 +118,6 @@ class PlumyLogos(
     @JvmField var rightBracketSyl = ')'
     @JvmField var leftQuote = '"'
     @JvmField var rightQuote = '"'
-    @JvmField var nothingName = "Nothing"
     @JvmField var name2Meta: Map<String, MetaType> = emptyMap()
     @JvmField var name2Kw: Map<String, Keywordy> = emptyMap()
     @JvmField var kw2Name: Map<Keywordy, String> = emptyMap()
@@ -138,6 +150,7 @@ class PlumyLogos(
                 "return" to Returna,
                 "stop" to Stopy,
                 "yield" to Yieldy,
+                "calcu" to Calcu,
             )
             name2Meta = mapOf(
                 "file" to FileMeta,
@@ -157,6 +170,7 @@ class PlumyLogos(
                 "返回" to Returna,
                 "终止" to Stopy,
                 "让步" to Yieldy,
+                "计算" to Calcu,
             )
             name2Meta = mapOf(
                 "文件" to FileMeta,
@@ -169,7 +183,6 @@ class PlumyLogos(
             rightBracketSyl = '）'
             leftQuote = '“'
             rightQuote = '”'
-            nothingName = "无"
         }
     }
 }
@@ -213,7 +226,7 @@ fun List<Statement>.generateNodeBy(context: Whisper): ArrayList<AnalyNode> {
 fun bakeNodes(context: Whisper, nodesInBlocky: Array<List<AnalyNode>?>): ArrayList<Node> {
     val res = ArrayList<Node>()
     for (analyNodes in nodesInBlocky) {
-        val nodes = analyNodes ?: throw RuntimeException("Null nodes.")
+        val nodes = analyNodes ?: throw AnalysisException("Null nodes.")
         for (node in nodes) {
             if (!node.fakeNode)
                 res.add(node.regen(context))

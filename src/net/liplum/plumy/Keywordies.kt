@@ -1,5 +1,6 @@
 package net.liplum.plumy
 
+import opengal.exceptions.AnalysisException
 import opengal.experssion.ExprUtils
 import opengal.experssion.ExpressionParser
 import opengal.tree.*
@@ -9,7 +10,7 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
 annotation class KwArgTypes(vararg val types: KClass<*>)
-class KeywordNoImplementException(msg: String) : RuntimeException(msg)
+class KeywordNoImplementException(msg: String) : AnalysisException(msg)
 abstract class Keywordy(var name: String = "") {
     @JvmField var argNum = 0
     @JvmField var isVarargs = false
@@ -186,6 +187,22 @@ object Yieldy : Keywordy("yield") {
             val parsed = parser.parse<Any>()
             YieldNode().apply { expr = parsed }
         }
+        return PlainNode(n)
+    }
+}
+
+object Calcu : Keywordy("calcu") {
+    init {
+        argNum = 1
+    }
+
+    override fun gen(context: Whisper, args: List<Any>): AnalyNode {
+        val n = CalcuNode()
+        val exprStr = args[0] as String
+        val tokens = ExprUtils.splitTokens(exprStr)
+        val parser = ExpressionParser(tokens)
+        val parsed = parser.parse<Any>()
+        n.expr = parsed
         return PlainNode(n)
     }
 }

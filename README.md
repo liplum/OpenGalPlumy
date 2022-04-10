@@ -1,7 +1,9 @@
 # OpenGAL Plumy
 [![](https://jitpack.io/v/liplum/OpenGalPlumy.svg)](https://jitpack.io/#liplum/OpenGalPlumy)
 
-**A [Open GAL](https://github.com/liplum/OpenGAL) compiler.**
+**A [Open GAL](https://github.com/liplum/OpenGAL) compiler based on 
+OpenGAL 0.3.**
+
 ## Functions
 - Converts source code (.gal) to node language (.node)
 - Generate Node Tree by source code (.gal).
@@ -19,7 +21,7 @@ allprojects {
 Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.liplum:OpenGalPlumy:v0.1'
+    implementation 'com.github.liplum:OpenGalPlumy:v0.1.2'
 }
 ```
 
@@ -27,7 +29,7 @@ dependencies {
 
 - Build this or use the release.
 ```shell
-# To get help
+# To get more help
 java -jar PlumyCompiler.jar -help
 # To compile
 java -jar PlumyCompiler.jar -c xxx.gal -t xxx.node

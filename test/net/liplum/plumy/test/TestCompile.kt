@@ -9,7 +9,7 @@ import java.io.File
 
 @ExtendWith(Timing::class, Memory::class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-@Tag("slow")
+@Tag("fast")
 class TestCompile {
 
     @Test

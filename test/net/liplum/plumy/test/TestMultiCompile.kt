@@ -16,6 +16,7 @@ class TestMultiCompile {
         val temp = System.getenv("TEMP")
         val tempFolder = File(temp, "TestFolderGalCompile")
         val targetFolder = File(temp, "CompiledNodes")
+        targetFolder.deleteRecursively()
         main(
             arrayOf(
                 "-c",
@@ -34,6 +35,7 @@ class TestMultiCompile {
         fun writeSourceToFolder() {
             val temp = System.getenv("TEMP")
             val tempFolder = File(temp, "TestFolderGalCompile")
+            tempFolder.deleteRecursively()
             tempFolder.mkdirs()
             for (i in 0..10) {
                 val file = File(tempFolder, "test$i.gal")

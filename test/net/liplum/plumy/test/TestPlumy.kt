@@ -1,10 +1,10 @@
 package net.liplum.plumy.test
 
 import net.liplum.plumy.PlumyAnalyzer
-import opengal.core.Interpreter
-import opengal.core.NodeTree
 import net.liplum.plumy.test.extension.Memory
 import net.liplum.plumy.test.extension.Timing
+import opengal.core.Interpreter
+import opengal.core.NodeTree
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
@@ -45,6 +45,8 @@ class TestPlumy {
         while (!inter.isEnd) {
             inter.execute()
         }
+        val testVar = inter.get<Any>("TestVar")
+        output.add("TestVar is $testVar\n")
     }
     @Test
     @Tag("fast")
@@ -97,7 +99,8 @@ class TestPlumy {
          @input Plum
          
         :action output(10)
-        :action output(1)
+        :action output(1)       #this is a comment
+        @TestVar = 9 + 10
         :if @IsTrue
             :action output("Wow, you got true!")
             :if @IsEnd

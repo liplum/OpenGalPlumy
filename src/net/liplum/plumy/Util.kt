@@ -33,21 +33,14 @@ fun String.allBefore(char: Char): String {
     return b.toString()
 }
 
-inline fun String.allUntil(whenTrue: (Char) -> Boolean): String {
-    val b = StringBuilder()
+inline fun String.allAfterWhen(predicate: (Char) -> Boolean): String {
     for (i in this.indices) {
         val c = this[i]
-        if (whenTrue(c)) {
-            b.append(this.substring(i))
-            break
+        if (predicate(c)) {
+            return this.substring(i)
         }
     }
-    return b.toString()
-}
-
-fun List<*>.printline() {
-    for (s in this)
-        println(s)
+    return ""
 }
 
 fun <K, V> Map<K, V>.reversed(): Map<V, K> {
@@ -60,11 +53,3 @@ fun <K, V> Map<K, V>.reversed(): Map<V, K> {
 
 fun List<String>.trim(): List<String> =
     this.map { it.trim() }
-
-data class WrapBool(var bool: Boolean) {
-    override fun toString() = bool.toString()
-}
-
-fun String.toStrList(): List<String> {
-    return this.map { it.toString() }
-}

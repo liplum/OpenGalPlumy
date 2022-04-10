@@ -1,12 +1,13 @@
 package net.liplum.plumy
 
+import opengal.exceptions.AnalysisException
 import opengal.experssion.Expression
 import opengal.tree.BlockEntryNode
 import opengal.tree.ConditionNode
 import opengal.tree.JumpNode
 import opengal.tree.Node
 
-class FakeNodeRegenException : RuntimeException()
+class FakeNodeRegenException : AnalysisException()
 abstract class AnalyNode {
     var fakeNode = false
     var index = 0
@@ -20,7 +21,7 @@ class PlainNode(
     override fun toString() = "[$index]$node"
 }
 
-class AnalyIfNoInfoException(msg: String) : RuntimeException(msg)
+class AnalyIfNoInfoException(msg: String) : AnalysisException(msg)
 class AnalyIfNode(
     var condition: Expression<*>
 ) : AnalyNode() {
@@ -43,7 +44,7 @@ class AnalyIfNode(
     override fun toString() = "[$index]:if $condition : $elseNode,$endNode"
 }
 
-class AnalyElseNoEndIndexException : RuntimeException()
+class AnalyElseNoEndIndexException : AnalysisException()
 class AnalyElseNode : AnalyNode() {
     var endNode: AnalyIfEndNode? = null
     override fun regen(context: Whisper): Node {
@@ -83,8 +84,7 @@ class AnalyEntryNode(
 
 class AnalyBlockHeadNode(
     var blockName: String
-) :
-    AnalyNode() {
+) : AnalyNode() {
     override fun regen(context: Whisper): Node {
         val info = context.getBlockInfo(blockName)
         return JumpNode().apply {
