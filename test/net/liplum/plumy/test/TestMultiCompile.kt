@@ -1,8 +1,8 @@
 package net.liplum.plumy.test
 
 import net.liplum.plumy.main
-import net.liplum.plumy.test.extension.Memory
-import net.liplum.plumy.test.extension.Timing
+import net.liplum.test.extension.Memory
+import net.liplum.test.extension.Timing
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File

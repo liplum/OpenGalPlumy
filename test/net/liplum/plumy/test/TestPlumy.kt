@@ -1,8 +1,8 @@
 package net.liplum.plumy.test
 
 import net.liplum.plumy.PlumyAnalyzer
-import net.liplum.plumy.test.extension.Memory
-import net.liplum.plumy.test.extension.Timing
+import net.liplum.test.extension.Memory
+import net.liplum.test.extension.Timing
 import opengal.core.Interpreter
 import opengal.core.NodeTree
 import org.junit.jupiter.api.*
